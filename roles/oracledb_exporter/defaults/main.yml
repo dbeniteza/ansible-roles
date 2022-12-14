@@ -1,0 +1,15 @@
+---
+# defaults file for oracledb_exporter
+process: "create"
+database: "mydbInstance"
+db_user: "sys"
+db_password: "mydbPassword"
+db_role: "sysdba"
+db_host: "mydbHost"
+db_port: "2008"
+metrics_volume: "metrics_prometheus"
+custom_metrics_filename: "custom-metrics.toml"
+container_name: "{{ database }}_oracledb_exporter"
+container_port: "9161"
+container_image: "iamseth/oracledb_exporter"
+DATA_SOURCE_NAME: "{{ db_user }}/{{ db_password }}@//{{ db_host }}:{{ db_port }}/{{ database }}?as={{ db_role }}"

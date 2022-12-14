@@ -1,0 +1,36 @@
+# tasks file for oracledb_exporter
+- name: Create container
+  block: 
+    - name: Check if container exists
+      ansible.builtin.import_tasks: check_container.yaml
+
+    - name: Create oracledb_exporter container
+      ansible.builtin.import_tasks: create_container.yaml
+      when: container_check['containers'] | length == 0
+
+  when: process=='create'
+
+- name: List containers
+  block: 
+    - name: Get info from all containers
+      containers.podman.podman_container_info:
+      register: list_containers # It should be filtered by the name of the container
+      no_log: true
+
+    - name: Print information from all containers
+      vars:
+        text_msg: |
+          Name: {{ item.Name }}
+          Status: {{ item.State.Status }}
+          IP: {{ item.NetworkSettings.IPAddress }}
+          Port: {{ item.NetworkSettings.Ports['9161/tcp'][0]['HostPort'] }}
+          Image: {{ item.Config.Image }}
+          Id: {{ item.Id }}
+      ansible.builtin.debug:
+        msg: "{{ text_msg.split('\n') }}" 
+      with_items: "{{ list_containers['containers'] }}"
+      loop_control:
+        label: "Container: {{ item.Name }}"
+      when: "'oracledb_exporter' in  item.Config.Image"
+
+  when: process=='list_containers'

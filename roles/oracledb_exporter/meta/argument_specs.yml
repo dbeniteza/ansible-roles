@@ -1,0 +1,84 @@
+argument_specs:
+  main:
+    short_description: This role creates a oracledb_exporter container
+    options:
+      process:
+        type: "str"
+        required: false
+        description: "Process to execute ['create','list_containers']. You can choose between create an oracledb_exporter container or list the existing oracledb_exporter containers"
+        choices:
+          - create
+          - list_containers
+        default:
+          - create
+
+      database:
+        type: "str"
+        required: true
+        description: "Database instance name to gather metrics with the oracledb_exporter."
+
+      db_user:
+        type: "str"
+        required: false
+        description: "Database username. Used for container environment variable DATA_SOURCE_NAME."
+        default: "sys"
+
+      db_password:
+        type: "str"
+        required: false
+        description: "Database user password. Used for container environment variable DATA_SOURCE_NAME."
+        default: "mydbPassword"
+
+      db_role:
+        type: "str"
+        required: false
+        description: "Database user role. Used for container environment variable DATA_SOURCE_NAME."
+        default: "sysdba"
+
+      db_host:
+        type: "str"
+        required: false
+        description: "Database host. Used for container environment variable DATA_SOURCE_NAME."
+        default: "mydbHost"
+
+      db_port:
+        type: "str"
+        required: false
+        description: "Database port. Used for container environment variable DATA_SOURCE_NAME."
+        default: "2008"
+
+      DATA_SOURCE_NAME:
+        type: "str"
+        required: false
+        description: "Environment variable for the container with database connection details following Easy Connect naming method."
+        default: "user/password@//myhost:2008/?as=sysdba"
+
+      metrics_volume:
+        type: "str"
+        required: false
+        description: "Volume to store Prometheus metrics. Used to create oracledb_exporter container."
+        default: "metrics_prometheus"
+
+      custom_metrics_filename:
+        type: "str"
+        required: false
+        description: "Custom metrics filename."
+        default: "custom-metrics.toml"
+
+      container_name:
+        type: "str"
+        required: false
+        description: "Container name. Used to create oracledb_exporter container."
+        default: "{{ database }}_oracledb_exporter"
+
+      container_port:
+        type: "str"
+        required: false
+        description: "Container port. Used to create oracledb_exporter container."
+        default: "9161"
+
+      container_image:
+        type: "str"
+        required: false
+        description: "oracledb_exporter container image"
+        default: "iamseth/oracledb_exporter"
