@@ -1,0 +1,16 @@
+- name: Check container
+  block: 
+    - name: Check if container exists for {{ database }} instance
+      containers.podman.podman_container_info:
+        name: "{{ container_name }}"
+      register: container_check
+      no_log: true
+
+    - ansible.builtin.debug:
+        msg: "Container {{ container_name }} already exists. Nothing to create"
+      when: container_check['containers'] | length > 0
+
+    - ansible.builtin.debug:
+        msg: "Container not found for {{ database }} instance. Creating a new one"
+      when: container_check['containers'] | length == 0
+

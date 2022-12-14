@@ -1,0 +1,31 @@
+- name: Create container
+  block:
+    - name: Gather info about specific volume for metrics
+      containers.podman.podman_volume_info:
+        name: "{{ metrics_volume }}"
+      register: volume_info
+      no_log: true
+
+    - name: Copy custom metrics file {{ custom_metrics_filename }} to remote machine
+      copy:
+        src: "{{ role_path }}/files/{{ custom_metrics_filename }}"
+        dest: "{{ volume_info['volumes'][0]['Mountpoint'] }}/{{ custom_metrics_filename }}"
+
+    - name: Create oracledb_exporter container
+      containers.podman.podman_container:
+        name: "{{ container_name }}"
+        image: "{{ container_image }}"
+        state: started
+        detach: true
+        restart_policy: always
+        env:
+          DATA_SOURCE_NAME: "{{ DATA_SOURCE_NAME }}"
+          CUSTOM_METRICS: "/metrics/{{ custom_metrics_filename }}"
+        ports:
+          - "{{ container_port }}:9161"
+        volumes: "{{ volume_info['volumes'][0]['Mountpoint'] }}:/metrics"
+      register: my_container_info
+      no_log: true
+
+    - ansible.builtin.debug:
+        msg: "{{ my_container_info['actions'] | join(' ') }} with ID {{ my_container_info['stdout'] }}"
