@@ -1,8 +1,6 @@
 oracledb_exporter
 =========
 
-[[_TOC_]]
-
 Description
 ------------
 
