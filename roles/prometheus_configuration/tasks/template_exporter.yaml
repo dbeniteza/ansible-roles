@@ -1,0 +1,5 @@
+- name: Create template for {{ exporter_type }}
+  block:
+    - name: Setting fact exporter_block (template in memory)
+      ansible.builtin.set_fact:
+        exporter_block: "{{ lookup('template', './exporter.j2') }}"

@@ -1,0 +1,21 @@
+- name: Rebuild prometheus config
+  block: 
+    - name: Rebuild prometheus.yaml base file from exporters
+      ansible.builtin.blockinfile:
+        block: "{{ exporter_block }}"
+        path: "{{ prometheus_config_dir }}/{{ prometheus_config_file }}"
+        backup: yes
+        marker: "# {mark} - ANSIBLE MANAGED BLOCK {{ element }}"
+        marker_begin: "BEGIN" # Default: "BEGIN"
+        marker_end: "END" # Default: "END"
+        state: "present" # Default: "present"
+        insertafter: "EOF" # Default: "EOF"
+      register: blockinfile_task
+      no_log: true
+
+    - name: Reload prometheus configuration (only if config file has been modified)
+      ansible.builtin.uri:
+        url: "{{ prometheus_server_url }}" 
+        method: POST
+        status_code: 200
+      when: blockinfile_task.changed

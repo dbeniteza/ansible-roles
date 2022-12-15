@@ -1,0 +1,11 @@
+---
+# defaults file for prometheus_configuration
+element: "mydbInstance"
+exporter_type: "oracledb_exporter"
+containers_server: "myContainersHost"
+container_name: "{{ element }}_{{ exporter_type }}"
+container_port: "9161"
+prometheus_server: "myPrometheusServer"
+prometheus_server_url: "http://{{prometheus_server}}:9090/-/reload"
+prometheus_config_dir: "/prometheus-docker"
+prometheus_config_file: "prometheus.yml"
