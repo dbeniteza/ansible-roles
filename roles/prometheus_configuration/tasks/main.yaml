@@ -1,0 +1,17 @@
+# tasks file for prometheus_configuration
+
+- name: Check if container exists
+  ansible.builtin.import_tasks: check_container.yaml
+  delegate_to: "{{containers_server}}"
+
+- name: Create exporter template and rebuild Prometheus config
+  block: 
+  - name: Create exporter template
+    ansible.builtin.import_tasks: template_exporter.yaml
+
+  - name: Rebuild Prometheus config 
+    ansible.builtin.import_tasks: rebuild_config.yaml
+
+  when: container_check['containers'] | length > 0 # If container exists
+  delegate_to: "{{prometheus_server}}"
+

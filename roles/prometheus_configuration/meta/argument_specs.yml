@@ -1,0 +1,56 @@
+argument_specs:
+  main:
+    short_description: This role configures a exporter from an existing container in a Prometheus server.
+    options:
+      exporter_type:
+        type: "str"
+        required: false
+        description: "Prometheus exporter type."
+        choices:
+          - oracledb_exporter
+          #- weblogic ## Add any kind of exporter you need
+        default:
+          - oracledb_exporter
+
+      element:
+        type: "str"
+        required: true
+        description: "Configuration element. It must be a database instance name for exporter_type='oracledb_exporter'."
+
+      containers_server:
+        type: "str"
+        required: false
+        description: "Containers server. Used to create exporter template."
+
+      container_name:
+        type: "str"
+        required: false
+        description: "Container name. Used to create exporter template."
+        default: "9161"
+
+      container_port:
+        type: "str"
+        required: false
+        description: "Container port. Used to create exporter template."
+        default: "9161"
+
+      prometheus_server:
+        type: "str"
+        required: false
+        description: "Prometheus server. It will store the exporter templates."
+
+      prometheus_server_url:
+        type: "str"
+        required: false
+        description: "Prometheus server URL. Used to reload configuration after adding the exporters."
+
+      prometheus_config_dir:
+        type: "str"
+        required: false
+        description: "Prometheus server configuration directory. Used to modify configuration."
+
+      prometheus_config_file:
+        type: "str"
+        required: false
+        description: "Prometheus server configuration file."
+        default: "prometheus.yml"

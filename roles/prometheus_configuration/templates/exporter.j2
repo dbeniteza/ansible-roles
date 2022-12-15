@@ -1,0 +1,7 @@
+  - job_name: '{{ container_name }}'
+    # metrics_path defaults to '/metrics'
+    static_configs:
+      - targets: ['{{ containers_server }}:{{ container_port }}'] 
+        labels:
+          name: {{ exporter_type }}
+          instance: {{ element }}
