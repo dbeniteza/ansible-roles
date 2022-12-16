@@ -1,0 +1,14 @@
+---
+# defaults file for jdk_install
+process: "install"
+platform: "solaris"
+jvm_type: "hotspot"
+version: "1.8.0_321"
+install_dir: "/tmp"
+java_home: "{{install_dir}}/jdk{{version}}"
+jdk_filename: "jdk{{version}}.tar.gz"
+user: "oracle"
+group: "oracle"
+repository_server: "myHTTPRepoServer"
+repository_server_url: "http://{{repository_server}}:8080"
+repository_server_context: "/java/jdk/{{platform}}/{{jvm_type}}/{{jdk_filename}}"

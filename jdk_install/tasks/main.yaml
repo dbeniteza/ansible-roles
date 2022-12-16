@@ -1,0 +1,24 @@
+
+- name: stat java_home
+  ansible.builtin.stat: 
+    path: "{{ java_home }}/bin"
+  register: java_home_stat
+  no_log: true
+
+- name: Install JDK
+  ansible.builtin.import_tasks: install.yaml
+  when: not java_home_stat.stat.exists and process=='install'
+
+- name: Nothing to install
+  ansible.builtin.debug:
+    msg: "JDK is already installed in {{ java_home }}"
+  when: java_home_stat.stat.exists and process=='install'
+
+- name: Deinstall JDK
+  ansible.builtin.import_tasks: deinstall.yaml
+  when: java_home_stat.stat.exists and process=='deinstall'
+
+- name: Nothing to deinstall
+  ansible.builtin.debug:
+    msg: "JDK is not installed in {{ java_home }}"
+  when: not java_home_stat.stat.exists and process=='deinstall'

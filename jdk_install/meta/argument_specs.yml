@@ -1,0 +1,72 @@
+argument_specs:
+  main:
+    short_description: This role installs Java JDK in a remote machine
+    options:
+      process:
+        type: "str"
+        required: false
+        description: "Process to execute ['install','deinstall']. You can choose install Java JDK or deintall it."
+        choices:
+          - install
+          - deinstall
+        default:
+          - install
+
+      platform:
+        type: "str"
+        required: false
+        description: "Destination machine OS platform. Used in conjunction with 'jvm_type' and 'version' variables to build the context and get binaries from HTTP repository server."
+        default: "solaris"
+
+      jvm_type:
+        type: "str"
+        required: false
+        description: "JVM type. Example: 'hotspot', 'openjdk'."
+        default: "hotspot"
+
+      version:
+        type: "str"
+        required: false
+        description: "JDK version."
+        default: "1.8.0_321"
+
+      install_dir:
+        type: "str"
+        required: false
+        description: "Installation directory. JDK binaries are unarchived under this directory."
+        default: "/tmp"
+
+      java_home:
+        type: "str"
+        required: false
+        description: "JAVA_HOME directory."
+        default: "{{install_dir}}/jdk{{version}}"
+
+      user:
+        type: "str"
+        required: false
+        description: "Installation owner username. It must exists on the remote machine."
+        default: "oracle"
+
+      group:
+        type: "str"
+        required: false
+        description: "Installation owner group name. It must exists on the remote machine."
+        default: "oracle"
+
+      repository_server:
+        type: "str"
+        required: false
+        description: "HTTP repository server that hosts Java JDK binaries."
+
+      repository_server_url:
+        type: "str"
+        required: false
+        description: "Repository server URL."
+        default: "http://{{repository_server}}:8080"
+
+      repository_server_context:
+        type: "str"
+        required: false
+        description: "Repository server context for Java JDK binaries."
+        default: "/java/jdk/{{platform}}/{{jvm_type}}/{{jdk_filename}}"

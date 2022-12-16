@@ -1,0 +1,62 @@
+- name: Install JDK
+  become_user: "{{ user }}"
+  block:
+
+    - name: Check if binary is present in repository
+      ansible.builtin.uri:
+        url: "{{ repository_server_url }}{{ repository_server_context }}"
+        method: HEAD
+        status_code: 200 # A list of valid, numeric, HTTP status codes that signifies success of the request.
+      register: uri_test
+      #ignore_errors: true # Uncomment to avoid role FAIL
+
+    - ansible.builtin.debug: # NOT executed if previous task fails
+        msg: "{{ jdk_filename }} binary cannot be found in repository context {{ repository_server_context }}"
+      when: uri_test.status is undefined or uri_test.status != 200
+
+    - name: Create tmp directory
+      tempfile:
+        state: directory
+        prefix: jdk_install-
+      when: uri_test.status == 200
+      register: jdk_install_tmp
+      no_log: true
+
+    - name: Download from HTTP server test
+      ansible.builtin.get_url:
+        url: "{{ repository_server_url }}{{ repository_server_context }}"
+        dest: "{{ jdk_install_tmp.path }}/{{ jdk_filename }}"
+        mode: '0755'
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        #decompress: true # added in ansible-core 2.14 - Version installed in GUNIX: ansible [core 2.13.6]
+      when: uri_test.status == 200
+      register: download_result
+      no_log: true
+
+    - name: Creates {{ install_dir }} directory if not exists
+      file:
+        path: "{{ install_dir }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ user }}"
+        group: "{{ group }}"
+      no_log: true
+
+    - name: Installing JDK in {{ java_home }}
+      ansible.builtin.unarchive:
+        src: "{{ jdk_install_tmp.path }}/{{ jdk_filename }}"
+        dest: "{{ install_dir }}" # MUST be an existing dir
+        remote_src: yes
+        creates: "{{ java_home }}/bin/java"
+        owner: "{{ user }}"
+        group: "{{ group }}"
+      when: download_result.status_code == 200
+
+  always:
+    - name: Remove tmp dir
+      ansible.builtin.file:
+        state: absent
+        dest: "{{ jdk_install_tmp.path }}"
+      when: jdk_install_tmp is defined
+      no_log: true
