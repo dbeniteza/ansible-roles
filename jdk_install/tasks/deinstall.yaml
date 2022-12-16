@@ -1,0 +1,8 @@
+- name: Desinstall JDK
+  block:
+    - name: Delete JDK is installed in {{ java_home }}
+      ansible.builtin.file: 
+        state: absent
+        dest: "{{ java_home }}"
+      no_log: true
+    
