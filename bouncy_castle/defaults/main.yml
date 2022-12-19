@@ -1,0 +1,22 @@
+---
+# defaults file for bouncy_castle
+download_method: "repository"
+java_home: "/tmp/jdk"
+user: "oracle"
+group: "oracle"
+jdk_version_jar: "jdk18on"
+repository_server: "vps-spr-gitlab.sanidad.msc"
+repository_server_download_url: "http://{{repository_server}}:8080/java/bouncy_castle/latest/"
+bc_download_url: "https://www.bouncycastle.org/download"
+download_url: "{{ repository_server_download_url if download_method=='repository' else bc_download_url }}"
+bc_version: "172" # Modify this value to the latest Bouncy Castle version
+bc_jars:
+    - 'bcjmail-{{jdk_version_jar}}-{{bc_version}}.jar'
+    - 'bcmail-{{jdk_version_jar}}-{{bc_version}}.jar'
+    - 'bcpg-{{jdk_version_jar}}-{{bc_version}}.jar'
+    - 'bcpkix-{{jdk_version_jar}}-{{bc_version}}.jar'
+    - 'bcprov-ext-{{jdk_version_jar}}-{{bc_version}}.jar'
+    - 'bcprov-{{jdk_version_jar}}-{{bc_version}}.jar'
+#    - 'bctest-{{jdk_version_jar}}-{{bc_version}}.jar' # Do not download Test Classes jar. Uncomment if needed
+    - 'bctls-{{jdk_version_jar}}-{{bc_version}}.jar'  
+    - 'bcutil-{{jdk_version_jar}}-{{bc_version}}.jar'

@@ -1,0 +1,5 @@
+- name: Check if Java and Bouncy Castle is installed. Check jar files.
+  ansible.builtin.import_tasks: checks.yaml
+
+- name: Install Bouncy Castle
+  ansible.builtin.import_tasks: install.yaml

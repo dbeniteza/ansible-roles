@@ -1,0 +1,72 @@
+argument_specs:
+  main:
+    short_description: This role installs Bouncy Castle libraries in a remote machine with a JDK installation.
+    options:
+      download_method:
+        type: "str"
+        required: false
+        description: "Bouncy Castle libraries download method ['repository','direct']. You can choose download from a local repository or directly from Internet."
+        choices:
+          - "repository"
+          - "direct"
+        default:
+          - "repository"
+
+      java_home:
+        type: "str"
+        required: false
+        description: "JAVA_HOME directory."
+        default: "/tmp/jdk"
+
+      user:
+        type: "str"
+        required: false
+        description: "Installation owner username. It must exists on the remote machine."
+        default: "oracle"
+
+      group:
+        type: "str"
+        required: false
+        description: "Installation owner group name. It must exists on the remote machine."
+        default: "oracle"
+
+      jdk_version_jar:
+        type: "str"
+        required: false
+        description: "JDK version jar. Bouncy Castle jar file names vary depending on the JDK version ('JDK 1.5 - JDK 1.8' or 'JDK 1.8 and later')."
+        choices:
+          - "jdk18on"
+          - "jdk15to18"
+        default: "jdk18on"
+
+      repository_server:
+        type: "str"
+        required: false
+        description: "HTTP repository server that hosts Bouncy Castle libraries."
+
+      repository_server_download_url:
+        type: "str"
+        required: false
+        description: "Repository server URL to download Bouncy Castle libraries."
+
+      bc_download_url:
+        type: "str"
+        required: false
+        description: "Bouncy Castle official website to download Bouncy Castle libraries."
+        default: "https://www.bouncycastle.org/download"
+
+      download_url:
+        type: "str"
+        required: false
+        description: "URL used to download libraries. It depends on 'download_method' variable value."
+
+      bc_version:
+        type: "str"
+        required: false
+        description: "Bouncy Castle libraries latest version."
+        default: "172"
+
+      bc_jars:
+        type: "str"
+        required: false
+        description: "List of Bouncy Castle jar files."
