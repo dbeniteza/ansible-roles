@@ -1,0 +1,64 @@
+- name: Check java installation
+  become_user: "{{ user }}"
+  block:
+    - name: Check java version installed in {{ java_home }}
+      ansible.builtin.shell: /{{ java_home }}/bin/java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+      register: java_version
+      changed_when: false
+
+    - ansible.builtin.debug:
+        msg: "Java is not installed"
+      when: java_version.stdout | length == 0
+
+    - ansible.builtin.debug:
+        msg: "Java version installed: {{java_version.stdout}}" # example: 1.8.0_271
+      when: java_version.stdout | length > 0
+
+- name: Check Bouncy Castle installation
+  become_user: "{{ user }}"
+  block:
+    - name: Check if Bouncy Castle is installed
+      ansible.builtin.find: 
+        path: "{{ java_home }}/jre/lib/ext/"
+        file_type: file
+        patterns:
+          - 'bcmail-*.jar'
+          - 'bcpg-*.jar'
+          - 'bcpkix-*.jar'
+          - 'bcprov-*.jar'
+          - 'bctls-*.jar'
+          - 'bcutil-*.jar'
+      register: bc_installed
+      no_log: true
+    
+    - ansible.builtin.debug:
+        msg: "Bouncy Castle is not installed"
+      when: bc_installed.matched == 0
+
+    - ansible.builtin.debug:
+        msg: "Bouncy Castle already installed"
+      when: bc_installed.matched>0
+
+  when: java_version.stdout | length > 0
+
+- name: Check binaries in repository
+  become_user: "{{ user }}"
+  block:
+    - name: Set repository context based on java version
+      ansible.builtin.set_fact:
+        jdk_version_jar: "{{ 'jdk15to18' if ( java_version.stdout | regex_search('^1.[5-7].*') ) else 'jdk18on' }}"
+
+    - name: Check if jars are present
+      ansible.builtin.uri:
+        url: "{{ download_url }}/{{ (item|from_yaml) }}" 
+        method: HEAD
+        status_code: 200
+      register: uri_test
+      loop: "{{ bc_jars }}"
+      delegate_to: localhost
+
+    - ansible.builtin.debug: # NOT executed if previous task fails
+        msg: "Bouncy Castle jars cannot be found {{ repository_server_context }}"
+      when: uri_test is undefined or ( uri_test.results | selectattr('status','equalto', 200) | count )  != ( uri_test.results | length )
+  
+  when: bc_installed is defined and bc_installed.matched == 0

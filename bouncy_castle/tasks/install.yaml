@@ -1,0 +1,37 @@
+- name: Install Bouncy Castle
+  become_user: "{{ user }}"
+  block:
+    - name: Download Bouncy Castle jar files from {{ download_url }}
+      ansible.builtin.get_url:
+        url: "{{ download_url }}/{{ (item|from_yaml) }}"
+        dest: "{{ java_home }}/jre/lib/ext"
+        mode: '0644'
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        timeout: 30 # Default: 10 (seconds)
+      loop: "{{ bc_jars }}"
+
+    - name: Read {{ java_home }}/jre/lib/security/java.security
+      slurp:
+        src: "{{ java_home }}/jre/lib/security/java.security"
+      register: remote_content_encoded
+      no_log: true
+
+    - name: Get last provider number
+      set_fact:
+        last_provider_num: "{{ (remote_content_encoded.content | b64decode).splitlines() | select('match', '^security.provider.*') | count }}"
+      no_log: true
+
+    - name: Add BouncyCastleProvider to {{ java_home }}/jre/lib/security/java.security
+      ansible.builtin.blockinfile:
+        block: "security.provider.{{ last_provider_num | int + 1 }}=org.bouncycastle.jce.provider.BouncyCastleProvider"
+        path: "{{ java_home }}/jre/lib/security/java.security"
+        backup: yes
+        marker: "# {mark} - Bouncy Castle provider"
+        marker_begin: "BEGIN" # Default: "BEGIN"
+        marker_end: "END" # Default: "END"
+        state: "present" # Default: "present"
+        insertafter: "^security.provider.{{ last_provider_num }}=*" # Insert after last provider
+      no_log: true
+
+  when: bc_installed is defined and bc_installed.matched == 0

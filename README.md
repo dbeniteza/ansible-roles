@@ -5,6 +5,10 @@ The repository `ansible-roles` contains Ansible roles that can help with infrast
 
 # Roles
 
+**bouncy_castle**
+------------
+The role `bouncy_castle` installs Bouncy Castle libraries in a remote machine with a JDK installation.
+
 **jdk_install**
 ------------
 

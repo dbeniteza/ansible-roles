@@ -1,0 +1,3 @@
+---
+# vars file for bouncy_castle
+bc_repo_dir: "/repo/sw/jdk/bouncy_castle"
