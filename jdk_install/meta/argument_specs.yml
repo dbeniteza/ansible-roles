@@ -5,7 +5,7 @@ argument_specs:
       process:
         type: "str"
         required: false
-        description: "Process to execute ['install','deinstall']. You can choose install Java JDK or deintall it."
+        description: "Process to execute ['install','deinstall']. You can choose install Java JDK or deinstall it."
         choices:
           - install
           - deinstall
