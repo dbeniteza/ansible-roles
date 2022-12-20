@@ -1,0 +1,31 @@
+- name: Deinstall FMW Infrastructure
+  become: yes
+  become_user: "{{ user }}"
+  block: 
+    - name: Create tmp directory
+      tempfile:
+        state: directory
+        prefix: fmw_infra_deinstall-
+      register: fmw_infra_deinstall_tmp
+
+    - name: Create response file {{ fmw_infra_deinstall_tmp.path }}/fmw_infr.rsp
+      template:
+        dest: "{{ fmw_infra_deinstall_tmp.path }}/fmw_infr.rsp"
+        src: fmw_infr.rsp.j2    
+
+    - name: Deinstall software
+      shell:
+        cmd: "{{ oracle_home }}/oui/bin/deinstall.sh -silent -responseFile {{ fmw_infra_deinstall_tmp.path }}/fmw_infr.rsp -logLevel {{ logLevel }}"
+      register: deinstall
+    
+    - name: Remove oracle_home {{ oracle_home }}
+      file: 
+        state: absent
+        dest: "{{ oracle_home }}"
+      when: deinstall.rc == 0
+
+  always:
+    - name: Remove tmp dir
+      ansible.builtin.file:
+        state: absent
+        dest: "{{ fmw_infra_deinstall_tmp.path }}"

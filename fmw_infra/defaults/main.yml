@@ -1,0 +1,15 @@
+---
+# defaults file for fmw_infra
+process: "install" # "deinstall"
+oracle_home: "/var/tmp/oracle_home" 
+java_home: "/tmp/jdk"
+oraInventory: "/var/tmp/oraInventory"
+create_oraInventory: true
+logLevel: "Info"
+install_type: "Fusion Middleware Infrastructure"
+user: "oracle"
+group: "oracle"
+fmw_version: "12.2.1.4.0"
+repository_server: "vps-spr-gitlab.sanidad.msc"
+repository_server_port: "8080"
+download_url: "http://{{repository_server}}:{{repository_server_port}}/oracle/fmw/binaries/{{fmw_version}}/fmw_{{fmw_version}}_infrastructure.jar"

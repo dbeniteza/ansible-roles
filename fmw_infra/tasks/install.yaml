@@ -1,0 +1,64 @@
+- name: Install FMW Infrastructure
+  become: yes
+  become_user: "{{ user }}"
+  block: 
+    - name: Create oraInventory
+      block:
+        - name: Create oraInventory dir {{ oraInventory }}
+          file: 
+            state: directory
+            dest: "{{ oraInventory }}"
+            owner: "{{ user }}"
+          no_log: true
+        - name: Create oraInst.loc
+          template:
+            dest: "{{ oraInventory }}/oraInst.loc"
+            src: oraInst.loc.j2
+          no_log: true
+      when: create_oraInventory
+
+    - name: Create tmp directory
+      tempfile:
+        state: directory
+        prefix: fmw_infra_install-
+      register: fmw_infra_install_tmp
+      no_log: true
+
+    - name: Check if binary is present in repository
+      ansible.builtin.uri:
+        url: "{{ download_url }}"
+        method: HEAD
+        status_code: 200
+      register: uri_test
+      no_log: true
+
+    - name: Download from HTTP server
+      ansible.builtin.get_url:
+        url: "{{ download_url }}"
+        dest: "{{ fmw_infra_install_tmp.path }}"
+        mode: '0755'
+        owner: "{{ user }}"
+        group: "{{ group }}"
+      when: uri_test.status == 200
+      register: download_result
+      no_log: true
+
+    - name: Install FMW Infrastructure {{ fmw_version }}
+      block:
+        - name: Create response file {{ fmw_infra_install_tmp.path }}/fmw_infr.rsp
+          template:
+            dest: "{{ fmw_infra_install_tmp.path }}/fmw_infr.rsp"
+            src: fmw_infr.rsp.j2
+
+        - name: Install software
+          vars:
+            java: "{{ java_home }}/bin/java "
+          shell:
+            cmd: "{{ java }} -jar {{ download_result.dest }} -responseFile {{ fmw_infra_install_tmp.path }}/fmw_infr.rsp  -silent -invPtrLoc {{ oraInventory }}/oraInst.loc -logLevel {{ logLevel }}"
+      when: download_result.status_code == 200
+
+  always:
+    - name: Remove tmp dir
+      ansible.builtin.file:
+        state: absent
+        dest: "{{ fmw_infra_install_tmp.path }}"

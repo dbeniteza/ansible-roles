@@ -1,0 +1,13 @@
+- name: Check oracle_home {{oracle_home}}
+  stat: 
+    path: "{{oracle_home}}"
+  register: oracle_home_stat
+  no_log: true
+
+- name: Install FMW Infrastructure {{ version }} on {{ oracle_home }}
+  import_tasks: install.yaml
+  when: not oracle_home_stat.stat.exists and process=='install'
+
+- name: Deinstall FMW Infrastructure on {{ oracle_home }}
+  import_tasks: deinstall.yaml
+  when: oracle_home_stat.stat.exists and process=='deinstall'
