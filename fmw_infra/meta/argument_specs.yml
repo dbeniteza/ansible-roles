@@ -1,0 +1,72 @@
+argument_specs:
+  main:
+    short_description: This role installs Oracle Fusion Middleware Infrastructure in a remote machine with a JDK installation.
+    options:
+      process:
+        type: "str"
+        required: false
+        description: "Process to execute ['install','deinstall']. You can choose install Oracle FMW Infrastructure or deinstall it."
+        choices:
+          - "install"
+          - "deinstall"
+        default:
+          - "install"
+
+      fmw_version:
+        type: "str"
+        required: false
+        description: "Oracle FMW Infrastructure version to install."
+        default: "12.2.1.4.0"
+
+      oracle_home:
+        type: "str"
+        required: false
+        description: "ORACLE_HOME directory."
+        default: "/var/tmp/oracle_home"
+
+      java_home:
+        type: "str"
+        required: false
+        description: "JAVA_HOME directory."
+        default: "/tmp/jdk"
+
+      oraInventory:
+        type: "str"
+        required: false
+        description: "oraInventory directory."
+        default: "/var/tmp/oraInventory"
+
+      create_oraInventory:
+        type: "bool"
+        required: false
+        description: "Create oraInventory file (oracle software inventory installed)."
+        default: true
+
+      user:
+        type: "str"
+        required: false
+        description: "Installation owner username. It must exists on the remote machine."
+        default: "oracle"
+
+      group:
+        type: "str"
+        required: false
+        description: "Installation owner group name. It must exists on the remote machine."
+        default: "oracle"
+
+      repository_server:
+        type: "str"
+        required: false
+        description: "HTTP repository server that hosts binaries."
+
+      repository_server_port:
+        type: "str"
+        required: false
+        description: "HTTP repository server port."
+        default: "8080"
+
+      download_url:
+        type: "str"
+        required: false
+        description: "URL used to download Oracle FMW Infra binaries."
+        default: "http://{{repository_server}}:{{repository_server_port}}/oracle/fmw/binaries/{{fmw_version}}/fmw_{{fmw_version}}_infrastructure.jar"

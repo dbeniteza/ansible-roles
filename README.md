@@ -15,6 +15,10 @@ The role `bouncy_castle` installs Bouncy Castle libraries in a remote machine wi
 The role `jdk_install` installs Java JDK.
 First, it checks whether a JDK installation exists on the specified JAVA_HOME, then downloads JDK binaries from HTTP repository server to the remote machine. After that, it installs JDK on the JAVA_HOME directory.
 
+**fmw_infra**
+------------
+The role `fmw_infra` installs Oracle Fusion Middleware Infrastructure in a remote machine with a JDK installation.
+
 **oracledb_exporter**
 ------------
 
