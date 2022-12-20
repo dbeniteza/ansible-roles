@@ -1,7 +1,2 @@
 ---
 # vars file for fmw_infra
-#logLevel: 'Info'
-#install_type: 'Fusion Middleware Infrastructure'
-#fmw_versions:
-#          "12.2.1.4": "/repo/sw/mw/fmw/binaries/12.2.1.4.0/fmw_12.2.1.4.0_infrastructure.jar"
-#          "12.2.1.3": "/repo/sw/mw/fmw/binaries/12.2.1.3.0/fmw_12.2.1.3.0_infrastructure.jar"
