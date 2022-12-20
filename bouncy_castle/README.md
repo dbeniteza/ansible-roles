@@ -37,7 +37,7 @@ Example Playbook
 - name: Install Bouncy Castle
   hosts: myRemoteHost
   roles:
-    - role: jdk_install
+    - role: bouncy_castle
       vars:
         ansible_python_interpreter: auto
         ansible_interpreter_python_fallback: ['/usr/bin/python3','/usr/bin/python2','/usr/bin/python']
